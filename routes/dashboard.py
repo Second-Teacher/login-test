@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from decorators.auth import auth_required
+from services.auth import auth_required
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
