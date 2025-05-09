@@ -13,9 +13,9 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Register blueprints
-from controllers.auth import auth_bp
-from controllers.public import public_bp
-from controllers.dashboard import dashboard_bp
+from routes.auth import auth_bp
+from routes.public import public_bp
+from routes.dashboard import dashboard_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(public_bp)
