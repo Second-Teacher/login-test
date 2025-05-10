@@ -17,3 +17,21 @@ class UserRepository:
             'createdAt': firestore.SERVER_TIMESTAMP
         }
         self.collection.document(user_id).set(user_data)
+    
+    def pdf_exists(self, user_id):
+        """pdf/UID 컬렉션에 사용자 uid 문서 존재 여부 확인"""
+        # 먼저 UID 문서가 있는지 확인
+        uid_ref = self.db.collection('pdf').document('UID')
+        if not uid_ref.get().exists:
+            # UID 문서가 없으면 생성
+            uid_ref.set({})
+        
+        # 사용자 문서 존재 여부 확인
+        user_pdf_ref = self.db.collection('pdf').document('UID').collection(user_id)
+        return user_pdf_ref.get().exists
+    
+    def create_pdf_document(self, user_id):
+        """pdf/UID 컬렉션에 사용자 uid 이름의 빈 문서 생성"""
+        user_pdf_ref = self.db.collection('pdf').document('UID').collection(user_id)
+        user_pdf_ref.set({})
+        print(f"Created empty document at pdf/UID/{user_id}")
