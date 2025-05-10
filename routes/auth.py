@@ -27,6 +27,10 @@ def authorize():
             user_repository.create(user_id, email)
             print(f"User document created for {user_id}")
         
+        
+        if not user_repository.pdf_exists(user_id):
+            user_repository.create_pdf_document(user_id)
+        
         return redirect(url_for('dashboard.dashboard'))
     except Exception as e:
         print(f"Authentication error: {e}")
