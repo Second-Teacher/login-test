@@ -4,90 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>내 프로필</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <style>
-        .profile-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .profile-section {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background-color: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            margin-right: 20px;
-        }
-        
-        .profile-info h1 {
-            margin: 0;
-            font-size: 1.5em;
-        }
-        
-        .profile-info p {
-            margin: 5px 0 0 0;
-            color: #777;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1em;
-        }
-        
-        .message {
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-        
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main_styles.css') }}">
 </head>
 <body>
     <div class="navbar">
         <div class="navbar-right">
             <a href="{{ url_for('dashboard.dashboard') }}">대시보드</a>
-            <a href="{{ url_for('pdf.summarizer') }}">PDF 요약기</a>
             <a href="{{ url_for('profile.profile') }}">내 프로필</a>
             <a href="{{ url_for('public.logout') }}">로그아웃</a>
         </div>
@@ -139,137 +61,13 @@
                 <h2>계정 탈퇴</h2>
                 <p style="color: #721c24;">주의: 계정을 삭제하면 모든 데이터가 영구적으로 삭제되며 복구할 수 없습니다.</p>
                 
-                <button id="deleteAccountBtn" class="login-btn" style="background-color: #dc3545; margin-top: 15px;">계정 탈퇴</button>
+                <button id="deleteAccountBtn" class="login-btn delete-account-btn">계정 탈퇴</button>
                 
                 <div id="deleteMessage" class="message" style="display: none;"></div>
             </div>
         </div>
     </main>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const updateNicknameBtn = document.getElementById('updateNicknameBtn');
-            const nicknameInput = document.getElementById('nickname');
-            const nicknameMessage = document.getElementById('nicknameMessage');
-            
-            updateNicknameBtn.addEventListener('click', function() {
-                const nickname = nicknameInput.value.trim();
-                
-                if (!nickname) {
-                    showMessage(nicknameMessage, '닉네임을 입력해주세요.', 'error');
-                    return;
-                }
-                
-                fetch('/profile/update-nickname', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ nickname: nickname })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showMessage(nicknameMessage, '닉네임이 업데이트되었습니다.', 'success');
-                    } else {
-                        showMessage(nicknameMessage, '닉네임 업데이트 실패: ' + data.error, 'error');
-                    }
-                })
-                .catch(error => {
-                    showMessage(nicknameMessage, '오류가 발생했습니다: ' + error, 'error');
-                });
-            });
-            
-            const changePasswordBtn = document.getElementById('changePasswordBtn');
-const newPasswordInput = document.getElementById('new_password');
-const confirmPasswordInput = document.getElementById('confirm_password');
-const passwordMessage = document.getElementById('passwordMessage');
-
-if (changePasswordBtn) {
-    changePasswordBtn.addEventListener('click', function() {
-        const newPassword = newPasswordInput.value;
-        const confirmPassword = confirmPasswordInput.value;
-        
-        if (!newPassword) {
-            showMessage(passwordMessage, '새 비밀번호를 입력해주세요.', 'error');
-            return;
-        }
-        
-        if (newPassword !== confirmPassword) {
-            showMessage(passwordMessage, '비밀번호가 일치하지 않습니다.', 'error');
-            return;
-        }
-        
-        fetch('/profile/change-password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ new_password: newPassword })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showMessage(passwordMessage, '비밀번호가 성공적으로 변경되었습니다.', 'success');
-                newPasswordInput.value = '';
-                confirmPasswordInput.value = '';
-            } else {
-                showMessage(passwordMessage, '비밀번호 변경 실패: ' + data.error, 'error');
-            }
-        })
-        .catch(error => {
-            showMessage(passwordMessage, '오류가 발생했습니다: ' + error, 'error');
-        });
-    });
-
-
-const deleteAccountBtn = document.getElementById('deleteAccountBtn');
-const deleteMessage = document.getElementById('deleteMessage');
-
-if (deleteAccountBtn) {
-    deleteAccountBtn.addEventListener('click', function() {
-        // 확인 대화상자 표시
-        if (!confirm('정말로 계정을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.')) {
-            return;
-        }
-        
-        fetch('/profile/delete-account', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({})
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showMessage(deleteMessage, '계정이 성공적으로 삭제되었습니다. 잠시 후 로그인 페이지로 이동합니다.', 'success');
-                
-                // 3초 후 로그인 페이지로 리디렉션
-                setTimeout(() => {
-                    window.location.href = '/login';
-                }, 3000);
-            } else {
-                showMessage(deleteMessage, '계정 삭제 실패: ' + data.error, 'error');
-            }
-        })
-        .catch(error => {
-            showMessage(deleteMessage, '오류가 발생했습니다: ' + error, 'error');
-        });
-    });
-}
-}
-            
-            function showMessage(element, message, type) {
-                element.textContent = message;
-                element.className = 'message ' + type;
-                element.style.display = 'block';
-                
-                setTimeout(() => {
-                    element.style.display = 'none';
-                }, 5000);
-            }
-        });
-    </script>
+    <script src="{{ url_for('static', filename='profile.js') }}"></script>
 </body>
 </html>
