@@ -17,11 +17,14 @@ from routes.auth import auth_bp
 from routes.public import public_bp
 from routes.dashboard import dashboard_bp
 from routes.pdf_summarizer import pdf_bp
+from routes.profile import profile_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(public_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(pdf_bp, url_prefix='/pdf')
+app.register_blueprint(profile_bp)
+
 
 # Firebase config endpoint
 @app.route('/api/firebase-config')
